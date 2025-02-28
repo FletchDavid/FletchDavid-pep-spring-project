@@ -58,43 +58,45 @@ public class SocialMediaController {
 
     @PostMapping("/messages")
     public ResponseEntity<Message> postMessage(@RequestBody Message message){
-        //TODO: implement Controller methods and exceptions
-        return null;
+        Message posted = messageService.postMessage(message);
+        if(posted != null) return ResponseEntity.status(200).body(posted);
+        else return ResponseEntity.status(400).build();
     }
 
     @GetMapping("/messages")
     public ResponseEntity<List<Message>> getAllMessages(){
-        //TODO: implement Controller methods and exceptions
-        return null;
+        List<Message> messages = messageService.getAllMessages();
+        return ResponseEntity.status(200).body(messages);
     }
 
     @GetMapping("/messages/{messageId}")
     public ResponseEntity<Message> getMessageById(@PathVariable int messageId){
-        //TODO: implement Controller methods and exceptions
-        return null;
+        Message message = messageService.getMessageById(messageId);
+        return ResponseEntity.status(200).body(message);
     }
     
     @DeleteMapping("/messages/{messageId}")
     public ResponseEntity<Integer> deleteMessageById(@PathVariable int messageId){
-        //TODO: implement Controller methods and exceptions
-        return null;
+        Integer deleted = messageService.deleteMessageById(messageId);
+        return ResponseEntity.status(200).body(deleted);
     }
 
     @PatchMapping("/messages/{messageId}")
-    public ResponseEntity<Integer> updateMessageById(@PathVariable int messageId, @RequestParam Message message){
-        //TODO: implement Controller methods and exceptions
-        return null;
+    public ResponseEntity<Integer> updateMessageById(@PathVariable int messageId, @RequestBody Message message){
+        int update = messageService.updateMessageById(messageId, message);
+        if(update != 0) return ResponseEntity.status(200).body(update);
+        else return ResponseEntity.status(400).body(update);
     }
 
-    @GetMapping("/accounts/{accountId}")
+    @GetMapping("/accounts/{accountId}/messages")
     public ResponseEntity<List<Message>> getUserMessages(@PathVariable int accountId){
-        //TODO: implement Controller methods and exceptions
-        return null;
+        List<Message> messages = messageService.getUserMessages(accountId);
+        return ResponseEntity.status(200).body(messages);
     }
 
     @ExceptionHandler(ConflictException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public String handleConflictException(ConflictException x){
-        return "Resource already exists: " + x.getMessage();
+        return "Account already exists: " + x.getMessage();
     }
 }
