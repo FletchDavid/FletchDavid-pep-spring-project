@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,12 +13,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.entity.Account;
 import com.example.entity.Message;
 import com.example.service.AccountService;
 import com.example.service.MessageService;
+import com.example.exception.ConflictException;
 
 import java.util.List;
 
@@ -40,15 +43,17 @@ public class SocialMediaController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Account> registerUser(@RequestBody Account user){
-        //TODO: implement Controller methods and exceptions
-        return null;
+    public ResponseEntity<Account> registerUser(@RequestBody Account user) throws ConflictException{
+        Account account = accountService.registerUser(user);
+        if(account != null) return ResponseEntity.status(200).body(account);
+        else return ResponseEntity.status(400).build();
     }
 
     @PostMapping("/login")
     public ResponseEntity<Account> loginUser(@RequestBody Account user){
-        //TODO: implement Controller methods and exceptions
-        return null;
+        Account account = accountService.loginUser(user);
+        if(account != null) return ResponseEntity.status(200).body(account);
+        else return ResponseEntity.status(401).build();
     }
 
     @PostMapping("/messages")
@@ -85,5 +90,11 @@ public class SocialMediaController {
     public ResponseEntity<List<Message>> getUserMessages(@PathVariable int accountId){
         //TODO: implement Controller methods and exceptions
         return null;
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public String handleConflictException(ConflictException x){
+        return "Resource already exists: " + x.getMessage();
     }
 }
